@@ -142,7 +142,7 @@ class MainTest {
         assertThat(output).contains("02-03"); // Most expensive hour (0.80)
         assertThat(output).contains("10,00"); // 10 öre (cheapest)
         assertThat(output).contains("80,00"); // 80 öre (most expensive)
-        assertThat(output).contains("80,00"); // 42,50 öre (medelpris)
+        assertThat(output).contains("42,50"); // 42,50 öre (medelpris)
     }
 
     @Test
