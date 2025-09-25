@@ -168,7 +168,7 @@ class MainTest {
 
         String output = bos.toString();
 
-        // Expected sorted output (ascending by price)
+        // Expected sorted output (descending by price)
         List<String> expectedOrder = List.of(
                 "20-21 30,00 öre",
                 "22-23 20,00 öre",
