@@ -18,8 +18,8 @@ public record ElPriceService(ElpriserAPI api) {
         return collectedPrices;
     }
 
-    public boolean noPrices(List<ElpriserAPI.Elpris> priser, String zoneEnum, LocalDate chosenDate) {
-        if (priser.isEmpty()) {
+    public boolean noPrices(List<ElpriserAPI.Elpris> prices, String zoneEnum, LocalDate chosenDate) {
+        if (prices.isEmpty()) {
             System.out.println("Inga priser tillgängliga för " + chosenDate + " i " + zoneEnum);
             return true;
         }

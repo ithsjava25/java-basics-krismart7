@@ -26,23 +26,15 @@ public class AppRunner {
 
         // Läs zon
         ElpriserAPI.Prisklass zoneEnum = cliArgs.getZone();
-        if (zoneEnum == null) {
-            ConsoleHelp.showHelp();
-            return;
-        }
-
         // Läs datum
         LocalDate chosenDate = cliArgs.getDate();
-        if (chosenDate == null) {
-            ConsoleHelp.showHelp();
-            return;
-        }
-
         // Läs laddningstimmar
         int chargingHours = cliArgs.getChargingHours();
-        if (chargingHours == 0 && cliArgs.charging != null) { // ogiltigt värde
+
+        // Om något värde var fel
+        if (cliArgs.isHelp()) {
             ConsoleHelp.showHelp();
-            return; // stoppar programmet här
+            return;
         }
 
         // Hämta priser
@@ -58,7 +50,7 @@ public class AppRunner {
         print.printZone(zoneEnum);
         print.printMinMaxMean(collectedPrices);
 
-        // Laddnings-fönster (endast giltiga värden)
+        // Laddnings-fönster
         if (chargingHours > 0) {
             List<ElpriserAPI.Elpris> window = calculate.findCheapestWindow(collectedPrices, chargingHours);
             print.printCheapestWindow(window, chargingHours);

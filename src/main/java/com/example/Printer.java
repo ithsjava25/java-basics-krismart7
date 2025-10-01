@@ -27,17 +27,17 @@ public class Printer {
         System.out.println("Medelpris: " + formatOre(calculate.meanPrice(priser)) + " öre");
     }
 
-    public void printHourlyMeanPrice(List<ElpriserAPI.Elpris> priser, boolean sorted) {
+    public void printHourlyMeanPrice(List<ElpriserAPI.Elpris> prices, boolean sorted) {
         List<Integer> meanHours = new ArrayList<>();
-        List<Double> meanPrice = calculate.hourlyMeanPrice(priser, meanHours);
-        if (sorted) calculate.sortDescending(meanHours, meanPrice);
+        List<Double> meanPrices = calculate.hourlyMeanPrice(prices, meanHours);
+        if (sorted) calculate.sortDescending(meanHours, meanPrices);
 
         for (int i = 0; i < meanHours.size(); i++) {
             LocalTime start = LocalTime.of(meanHours.get(i), 0);
             LocalTime end = start.plusHours(1);
 
             String timePeriod = start.format(hours) + "-" + end.format(hours);
-            System.out.println(timePeriod + " " + formatOre(meanPrice.get(i)) + " öre");
+            System.out.println(timePeriod + " " + formatOre(meanPrices.get(i)) + " öre");
         }
     }
 

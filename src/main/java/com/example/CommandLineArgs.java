@@ -8,7 +8,7 @@ public class CommandLineArgs {
 
     private String zone;
     private String date;
-    String charging;
+    private String charging;
     private boolean sorted = false;
     private boolean help = false;
 
@@ -26,7 +26,7 @@ public class CommandLineArgs {
                 case "--sorted" -> sorted = true;
                 case "--help" -> help = true;
                 default -> {
-                    System.out.println(arg + " Unknown argument");
+                    System.out.println(arg + " is an unknown argument");
                     help = true;
                 }
             }
@@ -36,19 +36,15 @@ public class CommandLineArgs {
         return (i + 1 < args.length) ? args[i + 1] : null;
     }
 
-    public boolean isHelp() {return help || showArg(); }
+    public boolean isHelp() { return help || zone == null && date == null && !sorted && charging == null; }
 
-    private String setArg(String value, String flag) {
-        if (value == null) {
+    private String setArg(String argValue, String flag) {
+        if (argValue == null) {
             System.out.println("Error: " + flag + " requires a value");
             help = true;
             return null;
         }
-        return value;
-    }
-
-    private boolean showArg() {
-        return zone == null && date == null && !sorted && charging == null;
+        return argValue;
     }
 
     public ElpriserAPI.Prisklass getZone() {
@@ -80,24 +76,23 @@ public class CommandLineArgs {
     public int getChargingHours() {
         if (charging == null) return 0;
 
-        // Extrahera siffror
-        String hoursStr = charging.replaceAll("\\D+", "");
-        if (hoursStr.isEmpty()) {
-            System.out.println("Invalid value for --charging: " + charging + ". Please enter 2, 4, or 8 hours.");
-            help = true;
-            return 0;
+        try {
+            int hours = Integer.parseInt(charging.replaceAll("\\D+", ""));
+            if (isValidChargingHours(hours)) return hours;
+        } catch (NumberFormatException ignored) {
         }
 
-        int hours = Integer.parseInt(hoursStr);
+        return invalidCharging(charging);
+    }
 
-        // Validera att endast 2, 4 eller 8 tillåts
-        if (hours != 2 && hours != 4 && hours != 8) {
-            System.out.println("Invalid value for --charging: " + hours + ". Please enter 2, 4, or 8 hours.");
-            help = true;
-            return 0;
-        }
+    private boolean isValidChargingHours(int hours) {
+        return hours == 2 || hours == 4 || hours == 8;
+    }
 
-        return hours;
+    private int invalidCharging(String argValue) {
+        System.out.println("Invalid value for --charging: " + argValue + ". Please enter 2, 4, or 8 hours.");
+        help = true;
+        return 0;
     }
 
     public boolean isSorted() {return sorted; }
