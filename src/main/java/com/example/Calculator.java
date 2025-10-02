@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Calculator {
 
+    public record HourPrice(int hour, double price) {}
+
     public double minPrice(List<ElpriserAPI.Elpris> prices) {
         if (prices.isEmpty()) return 0.0;
 
@@ -37,50 +39,49 @@ public class Calculator {
         } return sum / prices.size();
     }
 
-    public List<Double> hourlyMeanPrice(List<ElpriserAPI.Elpris> prices, List<Integer> meanHours) {
-        List<Double> meanPrices = new ArrayList<>();
-        if (prices.isEmpty()) return meanPrices;
+    public List<HourPrice> getHourlyMeanPrices(List<ElpriserAPI.Elpris> prices, boolean sorted) {
+        // Skapar en lista som ska innehålla HourPrice-records (timme + medelpris)
+        List<HourPrice> hourlyPrices = new ArrayList<>();
+        if (prices.isEmpty()) return hourlyPrices;
 
+        // Börja med timmen för första pris
         int currentHour = prices.get(0).timeStart().getHour();
+        // Lista för att samla alla priser som tillhör samma timme
         List<ElpriserAPI.Elpris> pricesInHour = new ArrayList<>();
 
         for (ElpriserAPI.Elpris price : prices) {
             int priceHour = price.timeStart().getHour();
 
-            // Spara medelpris för föregående timme
+            // Om timmen ändras till nästa timme
             if (priceHour != currentHour) {
-                meanHours.add(currentHour);
+                // Beräkna medelpriset för föregående timme
                 double mean = meanPrice(pricesInHour);
-                meanPrices.add(mean);
-
-                // Skapa ny lista för nästa timme
+                // Skapa ett HourPrice-record och lägg till i listan
+                hourlyPrices.add(new HourPrice(currentHour, mean));
+                // Börja samla priser för nästa timme
                 pricesInHour = new ArrayList<>();
                 currentHour = priceHour;
             }
+            // Lägg till priset i listan för aktuell timme
             pricesInHour.add(price);
         }
-        // Lägg till sista timmens medelpris
-        meanHours.add(currentHour);
+        // När loopen är klar, lägg till sista timmens medelpris
         double mean = meanPrice(pricesInHour);
-        meanPrices.add(mean);
-
-        return meanPrices;
+        hourlyPrices.add(new HourPrice(currentHour, mean));
+        // Om sortering önskas, sortera listan fallande på medelpris
+        if (sorted) sortDescending(hourlyPrices);
+        // Returnera listan med HourPrice-records
+        return hourlyPrices;
     }
 
-    public void sortDescending(List<Integer> meanHours, List<Double> meanPrices) {
-        for (int i = 0; i < meanPrices.size() - 1; i++) {
-            for (int j = 0; j < meanPrices.size() - 1 - i; j++) {
-                if (meanPrices.get(j) < meanPrices.get(j + 1)) {
+    private void sortDescending(List<HourPrice> hourlyPrices) {
 
-                    //Byt plats på timme
-                    double tempPrice = meanPrices.get(j);
-                    meanPrices.set(j, meanPrices.get(j + 1));
-                    meanPrices.set(j + 1, tempPrice);
-
-                    // Byt plats på motsvarande timme
-                    int tempHour = meanHours.get(j);
-                    meanHours.set(j, meanHours.get(j + 1));
-                    meanHours.set(j + 1, tempHour);
+        for (int i = 0; i < hourlyPrices.size() - 1; i++) {
+            for (int j = 0; j < hourlyPrices.size() - 1 - i; j++) {
+                if (hourlyPrices.get(j).price() < hourlyPrices.get(j + 1).price()) {
+                    HourPrice temp = hourlyPrices.get(j);
+                    hourlyPrices.set(j, hourlyPrices.get(j + 1));
+                    hourlyPrices.set(j + 1, temp);
                 }
             }
         }

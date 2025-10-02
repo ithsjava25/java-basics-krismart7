@@ -28,16 +28,11 @@ public class Printer {
     }
 
     public void printHourlyMeanPrice(List<ElpriserAPI.Elpris> prices, boolean sorted) {
-        List<Integer> meanHours = new ArrayList<>();
-        List<Double> meanPrices = calculate.hourlyMeanPrice(prices, meanHours);
-        if (sorted) calculate.sortDescending(meanHours, meanPrices);
-
-        for (int i = 0; i < meanHours.size(); i++) {
-            LocalTime start = LocalTime.of(meanHours.get(i), 0);
+        List<Calculator.HourPrice> hourly = calculate.getHourlyMeanPrices(prices, sorted);
+        for (Calculator.HourPrice hp : hourly) {
+            LocalTime start = LocalTime.of(hp.hour(), 0);
             LocalTime end = start.plusHours(1);
-
-            String timePeriod = start.format(hours) + "-" + end.format(hours);
-            System.out.println(timePeriod + " " + formatOre(meanPrices.get(i)) + " öre");
+            System.out.println(start.format(hours) + "-" + end.format(hours) + " " + formatOre(hp.price()) + " öre");
         }
     }
 

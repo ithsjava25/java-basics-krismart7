@@ -10,7 +10,7 @@ public class ConsoleHelp {
                 Usage:
                 --zone SE1|SE2|SE3|SE4    (required) Specify electricity zone
                 --date YYYY-MM-DD         (optional) Defaults to today
-                --sorted                  (optional) Display prices in ascending order
+                --sorted                  (optional) Display prices in descending order
                 --charging 2h|4h|8h       (optional) Find optimal charging windows
                 --help                    (optional) Show this help message
                 
