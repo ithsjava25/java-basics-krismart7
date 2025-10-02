@@ -10,7 +10,6 @@ public class Calculator {
 
     public double minPrice(List<ElpriserAPI.Elpris> prices) {
         if (prices.isEmpty()) return 0.0;
-
         double min = prices.get(0).sekPerKWh();
         for (ElpriserAPI.Elpris p : prices) {
             if (p.sekPerKWh() < min) {
@@ -21,7 +20,6 @@ public class Calculator {
 
     public double maxPrice(List<ElpriserAPI.Elpris> prices) {
         if (prices.isEmpty()) return 0.0;
-
         double max = prices.get(0).sekPerKWh();
         for (ElpriserAPI.Elpris p : prices) {
             if (p.sekPerKWh() > max) {
@@ -32,7 +30,6 @@ public class Calculator {
 
     public double meanPrice(List<ElpriserAPI.Elpris> prices) {
         if (prices.isEmpty()) return 0.0;
-
         double sum = 0.0;
         for (ElpriserAPI.Elpris p : prices) {
             sum += p.sekPerKWh();
@@ -75,7 +72,7 @@ public class Calculator {
     }
 
     private void sortDescending(List<HourPrice> hourlyPrices) {
-
+        // Sorterar timpriserna i fallande ordning med bubble sort
         for (int i = 0; i < hourlyPrices.size() - 1; i++) {
             for (int j = 0; j < hourlyPrices.size() - 1 - i; j++) {
                 if (hourlyPrices.get(j).price() < hourlyPrices.get(j + 1).price()) {
@@ -89,7 +86,6 @@ public class Calculator {
 
     public List<ElpriserAPI.Elpris> findCheapestWindow(List<ElpriserAPI.Elpris> prices, int windowHours) {
         List<ElpriserAPI.Elpris> cheapestWindow = new ArrayList<>();
-
         if (prices.isEmpty() || windowHours <= 0 || prices.size() < windowHours) {
             return cheapestWindow;
         }

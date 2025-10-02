@@ -4,7 +4,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public record ElPriceService(ElpriserAPI api) {
+public class ElPriceService {
+    private final ElpriserAPI api;
+
+    public ElPriceService(ElpriserAPI api) {
+        this.api = api;
+    }
 
     public List<ElpriserAPI.Elpris> getCollectedPrices(LocalDate chosenDate, ElpriserAPI.Prisklass zoneEnum) {
         List<ElpriserAPI.Elpris> collectedPrices = new ArrayList<>();
