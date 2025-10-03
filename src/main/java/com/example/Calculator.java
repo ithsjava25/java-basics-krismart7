@@ -48,7 +48,6 @@ public class Calculator {
 
         for (ElpriserAPI.Elpris price : prices) {
             int priceHour = price.timeStart().getHour();
-
             // Om timmen ändras till nästa timme
             if (priceHour != currentHour) {
                 // Beräkna medelpriset för föregående timme
@@ -96,9 +95,7 @@ public class Calculator {
         for (int i = 0; i < windowHours; i++) {
             minSum += prices.get(i).sekPerKWh();
         }
-
         int startIndex = 0;
-
         // Index där det billigaste fönstret börjar
         for (int start = 1; start < totalPrices; start++) {
             double sum = 0;
