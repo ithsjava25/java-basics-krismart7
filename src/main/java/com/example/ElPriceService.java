@@ -23,7 +23,7 @@ public class ElPriceService {
         return collectedPrices;
     }
 
-    public boolean noPrices(List<ElpriserAPI.Elpris> prices, String zoneEnum, LocalDate chosenDate) {
+    public boolean noPrices(List<ElpriserAPI.Elpris> prices, ElpriserAPI.Prisklass zoneEnum, LocalDate chosenDate) {
         if (prices.isEmpty()) {
             System.out.println("Inga priser tillgängliga för " + chosenDate + " i " + zoneEnum);
             return true;

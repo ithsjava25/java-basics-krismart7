@@ -16,14 +16,14 @@ public class Printer {
         this.calculate = new Calculator();
     }
 
-    public void printZone(ElpriserAPI.Prisklass prisklass) {
+    public void printZone(ElpriserAPI.Prisklass zoneEnum) {
         System.out.println();
-        System.out.println("Vald elpriszon: " + prisklass.name()); }
+        System.out.println("Vald elpriszon: " + zoneEnum); }
 
-    public void printMinMaxMean(List<ElpriserAPI.Elpris> priser) {
-        System.out.println("Lägsta pris: " + formatOre(calculate.minPrice(priser)) + " öre");
-        System.out.println("Högsta pris: " + formatOre(calculate.maxPrice(priser)) + " öre");
-        System.out.println("Medelpris: " + formatOre(calculate.meanPrice(priser)) + " öre");
+    public void printMinMaxMean(List<ElpriserAPI.Elpris> prices) {
+        System.out.println("Lägsta pris: " + formatOre(calculate.minPrice(prices)) + " öre");
+        System.out.println("Högsta pris: " + formatOre(calculate.maxPrice(prices)) + " öre");
+        System.out.println("Medelpris: " + formatOre(calculate.meanPrice(prices)) + " öre");
     }
 
     public void printHourlyMeanPrice(List<ElpriserAPI.Elpris> prices, boolean sorted) {

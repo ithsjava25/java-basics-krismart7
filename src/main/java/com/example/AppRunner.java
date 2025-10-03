@@ -41,7 +41,7 @@ public class AppRunner {
         List<ElpriserAPI.Elpris> collectedPrices = elService.getCollectedPrices(chosenDate, zoneEnum);
 
         // Kontrollera om det finns priser
-        if (elService.noPrices(collectedPrices, zoneEnum.name(), chosenDate)) {
+        if (elService.noPrices(collectedPrices, zoneEnum, chosenDate)) {
             return;
         }
 
