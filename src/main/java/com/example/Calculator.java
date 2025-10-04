@@ -5,42 +5,42 @@ import java.util.List;
 
 public class Calculator {
 
-    public double minPrice(List<ElpriserAPI.Elpris> priser) {
-        if (priser.isEmpty()) return 0.0;
-        double min = priser.get(0).sekPerKWh();
-        for (ElpriserAPI.Elpris p : priser) {
+    public double minPrice(List<ElpriserAPI.Elpris> prices) {
+        if (prices.isEmpty()) return 0.0;
+        double min = prices.get(0).sekPerKWh();
+        for (ElpriserAPI.Elpris p : prices) {
             if (p.sekPerKWh() < min) {
                 min = p.sekPerKWh();
             }
         } return min;
     }
 
-    public double maxPrice(List<ElpriserAPI.Elpris> priser) {
-        if (priser.isEmpty()) return 0.0;
-        double max = priser.get(0).sekPerKWh();
-        for (ElpriserAPI.Elpris p : priser) {
+    public double maxPrice(List<ElpriserAPI.Elpris> prices) {
+        if (prices.isEmpty()) return 0.0;
+        double max = prices.get(0).sekPerKWh();
+        for (ElpriserAPI.Elpris p : prices) {
             if (p.sekPerKWh() > max) {
                 max = p.sekPerKWh();
             }
         } return max;
     }
 
-    public double meanPrice(List<ElpriserAPI.Elpris> priser) {
-        if (priser.isEmpty()) return 0.0;
+    public double meanPrice(List<ElpriserAPI.Elpris> prices) {
+        if (prices.isEmpty()) return 0.0;
         double sum = 0.0;
-        for (ElpriserAPI.Elpris p : priser) {
+        for (ElpriserAPI.Elpris p : prices) {
             sum += p.sekPerKWh();
-        } return sum / priser.size();
+        } return sum / prices.size();
     }
 
-    public List<Double> hourlyMeanPrice(List<ElpriserAPI.Elpris> priser, List<Integer> hoursOfDay) {
+    public List<Double> hourlyMeanPrice(List<ElpriserAPI.Elpris> prices, List<Integer> hoursOfDay) {
         List<Double> hourlyMeanPrices = new ArrayList<>();
-        if (priser.isEmpty()) return hourlyMeanPrices;
+        if (prices.isEmpty()) return hourlyMeanPrices;
 
-        int currentHour = priser.get(0).timeStart().getHour();
+        int currentHour = prices.get(0).timeStart().getHour();
         List<ElpriserAPI.Elpris> pricesInHour = new ArrayList<>();
 
-        for (ElpriserAPI.Elpris pris : priser) {
+        for (ElpriserAPI.Elpris pris : prices) {
             int hourlyPrice = pris.timeStart().getHour();
 
             if (hourlyPrice != currentHour) {
@@ -78,16 +78,16 @@ public class Calculator {
         }
     }
 
-    public List<ElpriserAPI.Elpris> findCheapestWindow(List<ElpriserAPI.Elpris> priser, int windowHours) {
+    public List<ElpriserAPI.Elpris> findCheapestWindow(List<ElpriserAPI.Elpris> prices, int windowHours) {
         List<ElpriserAPI.Elpris> cheapestWindow = new ArrayList<>();
 
-        if (priser.isEmpty() || windowHours <= 0 || priser.size() < windowHours) {
+        if (prices.isEmpty() || windowHours <= 0 || prices.size() < windowHours) {
             return cheapestWindow;
         }
-        int totalPrices = priser.size();
+        int totalPrices = prices.size();
         double minSum = 0;
         for (int i = 0; i < windowHours; i++) {
-            minSum += priser.get(i).sekPerKWh();
+            minSum += prices.get(i).sekPerKWh();
         }
         int startIndex = 0;
 
@@ -95,7 +95,7 @@ public class Calculator {
             double sum = 0;
             for (int i = 0; i < windowHours; i++) {
                 int index = (start + i) % totalPrices;
-                sum += priser.get(index).sekPerKWh();
+                sum += prices.get(index).sekPerKWh();
             }
             if (sum < minSum) {
                 minSum = sum;
@@ -104,7 +104,7 @@ public class Calculator {
         }
         for (int i = 0; i < windowHours; i++) {
             int index = (startIndex + i) % totalPrices;
-            cheapestWindow.add(priser.get(index));
+            cheapestWindow.add(prices.get(index));
         }
         return cheapestWindow;
     }
