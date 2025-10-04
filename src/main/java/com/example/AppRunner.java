@@ -1,6 +1,5 @@
 package com.example;
 import com.example.api.ElpriserAPI;
-import com.example.utils.ConsoleHelp;
 import java.time.LocalDate;
 import java.util.List;
 

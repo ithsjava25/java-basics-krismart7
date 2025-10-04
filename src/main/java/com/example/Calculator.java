@@ -3,116 +3,108 @@ import com.example.api.ElpriserAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Calculator {
 
-    public record HourPrice(int hour, double price) {}
-
-    public double minPrice(List<ElpriserAPI.Elpris> prices) {
-        if (prices.isEmpty()) return 0.0;
-        double min = prices.get(0).sekPerKWh();
-        for (ElpriserAPI.Elpris p : prices) {
+    public double minPrice(List<ElpriserAPI.Elpris> priser) {
+        if (priser.isEmpty()) return 0.0;
+        double min = priser.get(0).sekPerKWh();
+        for (ElpriserAPI.Elpris p : priser) {
             if (p.sekPerKWh() < min) {
                 min = p.sekPerKWh();
             }
         } return min;
     }
 
-    public double maxPrice(List<ElpriserAPI.Elpris> prices) {
-        if (prices.isEmpty()) return 0.0;
-        double max = prices.get(0).sekPerKWh();
-        for (ElpriserAPI.Elpris p : prices) {
+    public double maxPrice(List<ElpriserAPI.Elpris> priser) {
+        if (priser.isEmpty()) return 0.0;
+        double max = priser.get(0).sekPerKWh();
+        for (ElpriserAPI.Elpris p : priser) {
             if (p.sekPerKWh() > max) {
                 max = p.sekPerKWh();
             }
         } return max;
     }
 
-    public double meanPrice(List<ElpriserAPI.Elpris> prices) {
-        if (prices.isEmpty()) return 0.0;
+    public double meanPrice(List<ElpriserAPI.Elpris> priser) {
+        if (priser.isEmpty()) return 0.0;
         double sum = 0.0;
-        for (ElpriserAPI.Elpris p : prices) {
+        for (ElpriserAPI.Elpris p : priser) {
             sum += p.sekPerKWh();
-        } return sum / prices.size();
+        } return sum / priser.size();
     }
 
-    public List<HourPrice> getHourlyMeanPrices(List<ElpriserAPI.Elpris> prices, boolean sorted) {
-        // Skapar en lista som ska innehålla HourPrice-records (timme + medelpris)
-        List<HourPrice> hourlyPrices = new ArrayList<>();
-        if (prices.isEmpty()) return hourlyPrices;
+    public List<Double> hourlyMeanPrice(List<ElpriserAPI.Elpris> priser, List<Integer> hoursOfDay) {
+        List<Double> hourlyMeanPrices = new ArrayList<>();
+        if (priser.isEmpty()) return hourlyMeanPrices;
 
-        // Börja med timmen för första pris
-        int currentHour = prices.get(0).timeStart().getHour();
-        // Lista för att samla alla priser som tillhör samma timme
+        int currentHour = priser.get(0).timeStart().getHour();
         List<ElpriserAPI.Elpris> pricesInHour = new ArrayList<>();
 
-        for (ElpriserAPI.Elpris price : prices) {
-            int priceHour = price.timeStart().getHour();
-            // Om timmen ändras till nästa timme
-            if (priceHour != currentHour) {
-                // Beräkna medelpriset för föregående timme
+        for (ElpriserAPI.Elpris pris : priser) {
+            int hourlyPrice = pris.timeStart().getHour();
+
+            if (hourlyPrice != currentHour) {
+                hoursOfDay.add(currentHour);
+
                 double mean = meanPrice(pricesInHour);
-                // Skapa ett HourPrice-record och lägg till i listan
-                hourlyPrices.add(new HourPrice(currentHour, mean));
-                // Börja samla priser för nästa timme
+                hourlyMeanPrices.add(mean);
+
                 pricesInHour = new ArrayList<>();
-                currentHour = priceHour;
+                currentHour = hourlyPrice;
             }
-            // Lägg till priset i listan för aktuell timme
-            pricesInHour.add(price);
+            pricesInHour.add(pris);
         }
-        // När loopen är klar, lägg till sista timmens medelpris
+        hoursOfDay.add(currentHour);
         double mean = meanPrice(pricesInHour);
-        hourlyPrices.add(new HourPrice(currentHour, mean));
-        // Om sortering önskas, sortera listan fallande på medelpris
-        if (sorted) sortDescending(hourlyPrices);
-        // Returnera listan med HourPrice-records
-        return hourlyPrices;
+        hourlyMeanPrices.add(mean);
+        return hourlyMeanPrices;
     }
 
-    private void sortDescending(List<HourPrice> hourlyPrices) {
-        // Sorterar timpriserna i fallande ordning med bubble sort
-        for (int i = 0; i < hourlyPrices.size() - 1; i++) {
-            for (int j = 0; j < hourlyPrices.size() - 1 - i; j++) {
-                if (hourlyPrices.get(j).price() < hourlyPrices.get(j + 1).price()) {
-                    HourPrice temp = hourlyPrices.get(j);
-                    hourlyPrices.set(j, hourlyPrices.get(j + 1));
-                    hourlyPrices.set(j + 1, temp);
+    public void sortDescending(List<Integer> hoursOfDay, List<Double> hourlyMeanPrice) {
+        for (int i = 0; i < hourlyMeanPrice.size() - 1; i++) {
+            for (int j = 0; j < hourlyMeanPrice.size() - 1 - i; j++) {
+
+                if (hourlyMeanPrice.get(j) < hourlyMeanPrice.get(j + 1)) {
+
+                    double tempPrice = hourlyMeanPrice.get(j);
+                    hourlyMeanPrice.set(j, hourlyMeanPrice.get(j + 1));
+                    hourlyMeanPrice.set(j + 1, tempPrice);
+
+                    int tempHour = hoursOfDay.get(j);
+                    hoursOfDay.set(j, hoursOfDay.get(j + 1));
+                    hoursOfDay.set(j + 1, tempHour);
                 }
             }
         }
     }
 
-    public List<ElpriserAPI.Elpris> findCheapestWindow(List<ElpriserAPI.Elpris> prices, int windowHours) {
+    public List<ElpriserAPI.Elpris> findCheapestWindow(List<ElpriserAPI.Elpris> priser, int windowHours) {
         List<ElpriserAPI.Elpris> cheapestWindow = new ArrayList<>();
-        if (prices.isEmpty() || windowHours <= 0 || prices.size() < windowHours) {
+
+        if (priser.isEmpty() || windowHours <= 0 || priser.size() < windowHours) {
             return cheapestWindow;
         }
-        int totalPrices = prices.size();
+        int totalPrices = priser.size();
         double minSum = 0;
-
-        // Beräkna summan av de första windowHours timmarna
         for (int i = 0; i < windowHours; i++) {
-            minSum += prices.get(i).sekPerKWh();
+            minSum += priser.get(i).sekPerKWh();
         }
         int startIndex = 0;
-        // Index där det billigaste fönstret börjar
+
         for (int start = 1; start < totalPrices; start++) {
             double sum = 0;
             for (int i = 0; i < windowHours; i++) {
                 int index = (start + i) % totalPrices;
-                sum += prices.get(index).sekPerKWh();
+                sum += priser.get(index).sekPerKWh();
             }
-            // Om denna summa är billigare, spara startindex och nytt minSum
             if (sum < minSum) {
                 minSum = sum;
                 startIndex = start;
             }
         }
-        // Bygg listan med de billigaste priserna utifrån startIndex
         for (int i = 0; i < windowHours; i++) {
             int index = (startIndex + i) % totalPrices;
-            cheapestWindow.add(prices.get(index));
+            cheapestWindow.add(priser.get(index));
         }
         return cheapestWindow;
     }

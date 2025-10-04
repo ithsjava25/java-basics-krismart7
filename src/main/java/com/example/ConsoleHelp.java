@@ -1,4 +1,4 @@
-package com.example.utils;
+package com.example;
 
 public class ConsoleHelp {
     public static void showHelp() {

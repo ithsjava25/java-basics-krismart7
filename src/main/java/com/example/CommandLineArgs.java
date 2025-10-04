@@ -1,5 +1,4 @@
 package com.example;
-
 import com.example.api.ElpriserAPI;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -75,13 +74,11 @@ public class CommandLineArgs {
 
     public int getChargingHours() {
         if (charging == null) return 0;
-
         try {
             int hours = Integer.parseInt(charging.replaceAll("\\D+", ""));
             if (isValidChargingHours(hours)) return hours;
         } catch (NumberFormatException ignored) {
         }
-
         return invalidCharging(charging);
     }
 
@@ -95,5 +92,5 @@ public class CommandLineArgs {
         return 0;
     }
 
-    public boolean isSorted() {return sorted; }
+    public boolean isSorted() { return sorted; }
 }
