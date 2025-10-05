@@ -33,46 +33,43 @@ public class Calculator {
         } return sum / prices.size();
     }
 
-    public List<Double> hourlyMeanPrice(List<ElpriserAPI.Elpris> prices, List<Integer> hoursOfDay) {
-        List<Double> hourlyMeanPrices = new ArrayList<>();
-        if (prices.isEmpty()) return hourlyMeanPrices;
+    public List<Double> hourlyMeanPrices(List<ElpriserAPI.Elpris> prices, List<Integer> hoursOfDay) {
+        List<Double> hourlyMeans = new ArrayList<>();
+        if (prices.isEmpty()) return hourlyMeans;
 
         int currentHour = prices.get(0).timeStart().getHour();
         List<ElpriserAPI.Elpris> pricesInHour = new ArrayList<>();
 
         for (ElpriserAPI.Elpris pris : prices) {
-            int hourlyPrice = pris.timeStart().getHour();
-
-            if (hourlyPrice != currentHour) {
+            int hour = pris.timeStart().getHour();
+            if (hour != currentHour) {
                 hoursOfDay.add(currentHour);
-
                 double mean = meanPrice(pricesInHour);
-                hourlyMeanPrices.add(mean);
-
+                hourlyMeans.add(mean);
                 pricesInHour = new ArrayList<>();
-                currentHour = hourlyPrice;
+                currentHour = hour;
             }
             pricesInHour.add(pris);
         }
         hoursOfDay.add(currentHour);
         double mean = meanPrice(pricesInHour);
-        hourlyMeanPrices.add(mean);
-        return hourlyMeanPrices;
+        hourlyMeans.add(mean);
+        return hourlyMeans;
     }
 
-    public void sortDescending(List<Integer> hoursOfDay, List<Double> hourlyMeanPrice) {
-        for (int i = 0; i < hourlyMeanPrice.size() - 1; i++) {
-            for (int j = 0; j < hourlyMeanPrice.size() - 1 - i; j++) {
+    public void sortDescending(List<Integer> hours, List<Double> hourlyMeans) {
+        for (int i = 0; i < hourlyMeans.size() - 1; i++) {
+            for (int j = 0; j < hourlyMeans.size() - 1 - i; j++) {
 
-                if (hourlyMeanPrice.get(j) < hourlyMeanPrice.get(j + 1)) {
+                if (hourlyMeans.get(j) < hourlyMeans.get(j + 1)) {
 
-                    double tempPrice = hourlyMeanPrice.get(j);
-                    hourlyMeanPrice.set(j, hourlyMeanPrice.get(j + 1));
-                    hourlyMeanPrice.set(j + 1, tempPrice);
+                    double tempPrice = hourlyMeans.get(j);
+                    hourlyMeans.set(j, hourlyMeans.get(j + 1));
+                    hourlyMeans.set(j + 1, tempPrice);
 
-                    int tempHour = hoursOfDay.get(j);
-                    hoursOfDay.set(j, hoursOfDay.get(j + 1));
-                    hoursOfDay.set(j + 1, tempHour);
+                    int tempHour = hours.get(j);
+                    hours.set(j, hours.get(j + 1));
+                    hours.set(j + 1, tempHour);
                 }
             }
         }
@@ -90,7 +87,6 @@ public class Calculator {
             minSum += prices.get(i).sekPerKWh();
         }
         int startIndex = 0;
-
         for (int start = 1; start < totalPrices; start++) {
             double sum = 0;
             for (int i = 0; i < windowHours; i++) {

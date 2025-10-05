@@ -3,8 +3,8 @@ package com.example;
 public class Main {
     public static void main(String[] args) {
 
-        CommandLineArgs cliArgs = new CommandLineArgs(args);
-        AppRunner runner = new AppRunner(cliArgs);
-        runner.run();
+        CommandLineParser parser = new CommandLineParser(args);
+        ExecutionFlow flow = new ExecutionFlow(parser);
+        flow.execute();
     }
 }

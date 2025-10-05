@@ -3,7 +3,7 @@ import com.example.api.ElpriserAPI;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class CommandLineArgs {
+public class CommandLineParser {
 
     private String zone;
     private String date;
@@ -11,7 +11,7 @@ public class CommandLineArgs {
     private boolean sorted = false;
     private boolean help = false;
 
-    public CommandLineArgs(String[] args) {
+    public CommandLineParser(String[] args) {
         parseArgs(args);
     }
 
@@ -76,13 +76,13 @@ public class CommandLineArgs {
         if (charging == null) return 0;
         try {
             int hours = Integer.parseInt(charging.replaceAll("\\D+", ""));
-            if (isValidChargingHours(hours)) return hours;
+            if (validCharging(hours)) return hours;
         } catch (NumberFormatException ignored) {
         }
         return invalidCharging(charging);
     }
 
-    private boolean isValidChargingHours(int hours) {
+    private boolean validCharging(int hours) {
         return hours == 2 || hours == 4 || hours == 8;
     }
 

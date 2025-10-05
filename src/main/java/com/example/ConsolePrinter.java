@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Printer {
+public class ConsolePrinter {
     private final Calculator calculate;
-    private final DateTimeFormatter hours = DateTimeFormatter.ofPattern("HH");
-    private final DateTimeFormatter hoursandminutes = DateTimeFormatter.ofPattern("HH:mm");
+    private final DateTimeFormatter HOURS = DateTimeFormatter.ofPattern("HH");
+    private final DateTimeFormatter HOURS_MINUTES = DateTimeFormatter.ofPattern("HH:mm");
 
-    public Printer() {
+    public ConsolePrinter() {
         this.calculate = new Calculator();
     }
 
@@ -21,23 +21,22 @@ public class Printer {
         System.out.println();
         System.out.println("Vald elpriszon: " + zoneEnum); }
 
-    public void printMinMaxMean(List<ElpriserAPI.Elpris> priser) {
-        System.out.println("Lägsta pris: " + formatOre(calculate.minPrice(priser)) + " öre");
-        System.out.println("Högsta pris: " + formatOre(calculate.maxPrice(priser)) + " öre");
-        System.out.println("Medelpris: " + formatOre(calculate.meanPrice(priser)) + " öre");
+    public void printMinMaxMean(List<ElpriserAPI.Elpris> prices) {
+        System.out.println("Lägsta pris: " + formatOre(calculate.minPrice(prices)) + " öre");
+        System.out.println("Högsta pris: " + formatOre(calculate.maxPrice(prices)) + " öre");
+        System.out.println("Medelpris: " + formatOre(calculate.meanPrice(prices)) + " öre");
     }
 
-    public void printHourlyMeanPrice(List<ElpriserAPI.Elpris> priser, boolean sorted) {
-        List<Integer> meanHours = new ArrayList<>();
-        List<Double> meanPrice = calculate.hourlyMeanPrice(priser, meanHours);
-        if (sorted) calculate.sortDescending(meanHours, meanPrice);
+    public void printHourlyMeanPrice(List<ElpriserAPI.Elpris> prices, boolean sorted) {
+        List<Integer> hours = new ArrayList<>();
+        List<Double> means = calculate.hourlyMeanPrices(prices, hours);
+        if (sorted) calculate.sortDescending(hours, means);
 
-        for (int i = 0; i < meanHours.size(); i++) {
-            LocalTime start = LocalTime.of(meanHours.get(i), 0);
+        for (int i = 0; i < hours.size(); i++) {
+            LocalTime start = LocalTime.of(hours.get(i), 0);
             LocalTime end = start.plusHours(1);
-
-            String timePeriod = start.format(hours) + "-" + end.format(hours);
-            System.out.println(timePeriod + " " + formatOre(meanPrice.get(i)) + " öre");
+            String timePeriod = start.format(HOURS) + "-" + end.format(HOURS);
+            System.out.println(timePeriod + " " + formatOre(means.get(i)) + " öre");
         }
     }
 
@@ -46,8 +45,8 @@ public class Printer {
         System.out.println("Påbörja laddning under billigaste " + windowHours + "-timmarsfönstret:");
 
         for (ElpriserAPI.Elpris pris : cheapestWindow) {
-            String start = pris.timeStart().format(hoursandminutes);
-            String end = pris.timeEnd().format(hoursandminutes);
+            String start = pris.timeStart().format(HOURS_MINUTES);
+            String end = pris.timeEnd().format(HOURS_MINUTES);
             System.out.println("kl " + start + "-" + end + " " + formatOre(pris.sekPerKWh()) + " öre");
         }
         System.out.println();
