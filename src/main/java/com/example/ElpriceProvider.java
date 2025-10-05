@@ -4,13 +4,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+// Ansvarar för att hämta elpriser från API och samla dem över flera dagar
 public class ElpriceProvider {
     private final ElpriserAPI api;
 
+    // Tar emot ett API-objekt för att kunna hämta priser
     public ElpriceProvider(ElpriserAPI api) {
         this.api = api;
     }
 
+    // Hämtar priser för angivet datum och zon, inklusive nästa dag om tillgängligt
     public List<ElpriserAPI.Elpris> getCollectedPrices(LocalDate chosenDate, ElpriserAPI.Prisklass zoneEnum) {
         List<ElpriserAPI.Elpris> collectedPrices = new ArrayList<>();
 
@@ -23,6 +26,7 @@ public class ElpriceProvider {
         return collectedPrices;
     }
 
+    // Kontrollerar om listan med priser är tom och skriver ut meddelande om så är fallet
     public boolean noPrices(List<ElpriserAPI.Elpris> prices, LocalDate chosenDate, ElpriserAPI.Prisklass zoneEnum) {
         if (prices.isEmpty()) {
             System.out.println("Inga priser tillgängliga för " + chosenDate + " i " + zoneEnum);

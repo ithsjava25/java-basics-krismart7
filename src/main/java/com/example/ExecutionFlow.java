@@ -10,6 +10,8 @@ public class ExecutionFlow {
     private final ConsolePrinter printer;
 
     public ExecutionFlow(CommandLineParser parser) {
+        // Initierar huvudkomponenter för programflödet: tar emot parser för kommandoradsargument,
+        // skapar API-provider, kalkylator och utskriftsfunktion
         this.parser = parser;
         ElpriserAPI api = new ElpriserAPI();
         this.priceProvider = new ElpriceProvider(api);
@@ -18,42 +20,43 @@ public class ExecutionFlow {
     }
 
     public void execute() {
+        // Visa hjälptext vid exekvering av program om inga argument eller --help används
         if (parser.isHelp()) {
             ConsoleHelp.showHelp();
             return;
         }
 
-        // Läs zon
+        // Läs in användarens val av zon, datum och laddningstimmar
         ElpriserAPI.Prisklass zoneEnum = parser.getZone();
-        // Läs datum
         LocalDate chosenDate = parser.getDate();
-        // Läs laddningstimmar
         int chargingHours = parser.getChargingHours();
 
-        // Om något värde var fel
+        // Kontrollera argumentfel och visa hjälp vid behov
         if (parser.isHelp()) {
             ConsoleHelp.showHelp();
             return;
         }
 
-        // Hämta priser
+        // Hämta elpriser från API för valda datum och zon
         List<ElpriserAPI.Elpris> collectedPrices = priceProvider.getCollectedPrices(chosenDate, zoneEnum);
 
-        // Kontrollera om det finns priser
+        // Avsluta om inga priser finns
         if (priceProvider.noPrices(collectedPrices, chosenDate, zoneEnum)) {
             return;
         }
 
-        // Utskrifter
-        printer.printHourlyMeanPrice(collectedPrices, parser.isSorted());
+        // Visa beräknade timpriser, vald zon och prisstatistik
+        printer.printHeader();
         printer.printZone(zoneEnum);
         printer.printMinMaxMean(collectedPrices);
+        printer.printHourlyMeanPrice(collectedPrices, parser.isSorted());
 
-        // Laddnings-fönster
+        // Beräkna och visa billigaste laddningsfönster om laddningstimmar anges
         if (parser.getChargingHours() > 0) {
             List<ElpriserAPI.Elpris> cheapestWindow = calc.findCheapestWindow(collectedPrices, chargingHours);
             printer.printCheapestWindow(cheapestWindow, chargingHours);
         }
+        // Visa hjälptext som referens efter exekvering
         ConsoleHelp.showHelp();
     }
 }

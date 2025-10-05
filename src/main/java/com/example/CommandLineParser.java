@@ -4,17 +4,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 public class CommandLineParser {
-
+    // Sparar värden från kommandoradsargument
     private String zone;
     private String date;
     private String charging;
     private boolean sorted = false;
     private boolean help = false;
 
+    // Konstruktor som tar emot kommandoradsargument och parser dem
     public CommandLineParser(String[] args) {
         parseArgs(args);
     }
 
+    // Parse:a argument och spara dem i fälten
     private void parseArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i].toLowerCase();
@@ -31,12 +33,16 @@ public class CommandLineParser {
             }
         }
     }
+
+    // Hämtar nästa argument i arrayen
     private String nextArg(String[] args, int i) {
         return (i + 1 < args.length) ? args[i + 1] : null;
     }
 
+    // Kontrollera om hjälptext ska visas
     public boolean isHelp() { return help || zone == null && date == null && !sorted && charging == null; }
 
+    // Validera och spara argumentvärde, visa fel om saknas
     private String setArg(String argValue, String flag) {
         if (argValue == null) {
             System.out.println("Error: " + flag + " requires a value");
@@ -46,6 +52,7 @@ public class CommandLineParser {
         return argValue;
     }
 
+    // Konvertera zonsträng till enum, hantera ogiltig zon
     public ElpriserAPI.Prisklass getZone() {
         if (zone == null) {
             System.out.println("Error: --zone is required");
@@ -61,6 +68,7 @@ public class CommandLineParser {
         }
     }
 
+    // Konvertera datumsträng till LocalDate, default till idag om null
     public LocalDate getDate() {
         if (date == null) return LocalDate.now();
         try {
@@ -72,6 +80,7 @@ public class CommandLineParser {
         }
     }
 
+    // Omvandla sträng från kommandoradsargument till heltal och validera mot tillåtna laddningstimmar
     public int getChargingHours() {
         if (charging == null) return 0;
         try {
@@ -82,15 +91,15 @@ public class CommandLineParser {
         return invalidCharging(charging);
     }
 
-    private boolean validCharging(int hours) {
-        return hours == 2 || hours == 4 || hours == 8;
-    }
+    // Kontrollera om laddningstimmar är giltiga
+    private boolean validCharging(int hours) { return hours == 2 || hours == 4 || hours == 8; }
 
+    // Hantera ogiltig laddningstid och visa felmeddelande
     private int invalidCharging(String argValue) {
         System.out.println("Invalid value for --charging: " + argValue + ". Please enter 2, 4, or 8 hours.");
         help = true;
         return 0;
     }
-
+    // Returnera om sortering ska användas
     public boolean isSorted() { return sorted; }
 }
